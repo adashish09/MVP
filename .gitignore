@@ -1,0 +1,15 @@
+node_modules/
+.DS_Store
+.env
+*.log
+
+# Backend specific
+backend/data/
+backend/uploads/
+
+# Frontend specific
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
