@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Alert, Badge, Table } from 'react-bootstrap';
+import { Container, Row, Col, Card, Alert, Badge, Table, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
@@ -50,6 +51,14 @@ function BuyerDashboard() {
         <Col>
           <h2>My Orders</h2>
           <p className="text-muted">Track your purchase history</p>
+        </Col>
+        <Col className="text-end">
+          <Link to="/marketplace">
+            <Button variant="primary" size="lg">
+              <i className="fas fa-shopping-cart me-2"></i>
+              Browse Marketplace
+            </Button>
+          </Link>
         </Col>
       </Row>
 

@@ -1,10 +1,8 @@
 const express = require('express');
-const { geminiGeneration } = require('../Controllers/Gemini.js');
+const { geminiGeneration } = require('../../backendAss/Controllers/Gemini.js');
 
 const router = express.Router();
 
-
-router.post('/generate', geminiGeneration)
-
+router.post('/generate', geminiGeneration);
 
 module.exports = router;

@@ -52,10 +52,7 @@ const cropRoutes = require('./routes/crops');
 const orderRoutes = require('./routes/orders');
 const profileRoutes = require('./routes/profiles');
 const adminRoutes = require('./routes/admin');
-
-
-// Gemini AI route
-
+const geminiRoutes = require('./routes/GeminiRoute');
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -64,6 +61,7 @@ app.use('/api/crops', cropRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/gemini', geminiRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
