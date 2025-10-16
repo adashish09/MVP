@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, Modal, Alert, Badge, Table, Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/TranslationContext';
 
 function FarmerDashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
   const [crops, setCrops] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [revenue, setRevenue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCrop, setEditingCrop] = useState(null);
@@ -22,11 +25,21 @@ function FarmerDashboard() {
   });
 
   // AI Features State
-  const [cropPrediction, setCropPrediction] = useState({
+  const [cropSuggestion, setCropSuggestion] = useState({
     soilType: '',
     climate: '',
     season: '',
     location: '',
+    suggestion: null,
+    loading: false
+  });
+  const [harvestPrediction, setHarvestPrediction] = useState({
+    cropType: '',
+    plantingDate: '',
+    soilQuality: '',
+    weatherConditions: '',
+    irrigation: '',
+    fertilizer: '',
     prediction: null,
     loading: false
   });
@@ -39,17 +52,26 @@ function FarmerDashboard() {
 
   useEffect(() => {
     fetchData();
+    
+    // Set up polling for real-time updates
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000); // Poll every 5 seconds
+    
+    return () => clearInterval(interval);
   }, [user]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [cropsRes, ordersRes] = await Promise.all([
+      const [cropsRes, ordersRes, revenueRes] = await Promise.all([
         axios.get(`/api/crops/farmer/${user.id}`),
-        axios.get('/api/orders/farmer')
+        axios.get('/api/orders/farmer'),
+        axios.get(`/api/payments/farmer/${user.id}/revenue`)
       ]);
       setCrops(cropsRes.data);
       setOrders(ordersRes.data);
+      setRevenue(revenueRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
       setAlert({ type: 'danger', message: 'Failed to load data' });
@@ -142,32 +164,69 @@ function FarmerDashboard() {
   };
 
   // AI Functions
-  const handleCropPrediction = async () => {
-    if (!cropPrediction.soilType || !cropPrediction.climate || !cropPrediction.season || !cropPrediction.location) {
-      setAlert({ type: 'warning', message: 'Please fill in all fields for crop prediction' });
+  const handleCropSuggestion = async () => {
+    if (!cropSuggestion.soilType || !cropSuggestion.climate || !cropSuggestion.season || !cropSuggestion.location) {
+      setAlert({ type: 'warning', message: 'Please fill in all fields for crop suggestion' });
       return;
     }
 
-    setCropPrediction(prev => ({ ...prev, loading: true }));
+    setCropSuggestion(prev => ({ ...prev, loading: true }));
     try {
       const prompt = `Based on the following conditions, recommend the best crops to grow:
-      - Soil Type: ${cropPrediction.soilType}
-      - Climate: ${cropPrediction.climate}
-      - Season: ${cropPrediction.season}
-      - Location: ${cropPrediction.location}
+      - Soil Type: ${cropSuggestion.soilType}
+      - Climate: ${cropSuggestion.climate}
+      - Season: ${cropSuggestion.season}
+      - Location: ${cropSuggestion.location}
       
       Please provide specific crop recommendations with reasons and expected yield potential.`;
 
       const response = await axios.post('/api/gemini/generate', { prompt });
-      setCropPrediction(prev => ({ 
+      setCropSuggestion(prev => ({ 
+        ...prev, 
+        suggestion: response.data.candidates[0].content.parts[0].text,
+        loading: false 
+      }));
+    } catch (error) {
+      console.error('Error getting crop suggestion:', error);
+      setAlert({ type: 'danger', message: 'Failed to get crop suggestion' });
+      setCropSuggestion(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  const handleHarvestPrediction = async () => {
+    if (!harvestPrediction.cropType || !harvestPrediction.plantingDate || !harvestPrediction.soilQuality) {
+      setAlert({ type: 'warning', message: 'Please fill in all required fields for harvest prediction' });
+      return;
+    }
+
+    setHarvestPrediction(prev => ({ ...prev, loading: true }));
+    try {
+      const prompt = `Based on the following farming conditions, predict the harvest yield and production:
+      - Crop Type: ${harvestPrediction.cropType}
+      - Planting Date: ${harvestPrediction.plantingDate}
+      - Soil Quality: ${harvestPrediction.soilQuality}
+      - Weather Conditions: ${harvestPrediction.weatherConditions}
+      - Irrigation: ${harvestPrediction.irrigation}
+      - Fertilizer Used: ${harvestPrediction.fertilizer}
+      
+      Please provide:
+      1. Expected harvest date
+      2. Predicted yield per acre/hectare
+      3. Total production estimate
+      4. Quality assessment
+      5. Market price prediction
+      6. Recommendations for improvement`;
+
+      const response = await axios.post('/api/gemini/generate', { prompt });
+      setHarvestPrediction(prev => ({ 
         ...prev, 
         prediction: response.data.candidates[0].content.parts[0].text,
         loading: false 
       }));
     } catch (error) {
-      console.error('Error getting crop prediction:', error);
-      setAlert({ type: 'danger', message: 'Failed to get crop prediction' });
-      setCropPrediction(prev => ({ ...prev, loading: false }));
+      console.error('Error getting harvest prediction:', error);
+      setAlert({ type: 'danger', message: 'Failed to get harvest prediction' });
+      setHarvestPrediction(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -259,8 +318,8 @@ function FarmerDashboard() {
             <Col md={3}>
               <Card className="text-center border-0 shadow-sm stat-card">
                 <Card.Body>
-                  <div className="stat-value text-info">${crops.reduce((sum, crop) => sum + (crop.price * crop.quantity), 0).toFixed(2)}</div>
-                  <div className="stat-label">Total Value</div>
+                  <div className="stat-value text-info">₹{revenue?.totalRevenue?.toFixed(2) || '0.00'}</div>
+                  <div className="stat-label">Total Revenue</div>
                 </Card.Body>
               </Card>
             </Col>
@@ -298,7 +357,7 @@ function FarmerDashboard() {
                     <div key={order.id} className="d-flex justify-content-between align-items-center mb-2">
                       <div>
                         <strong>Order #{order.id.substring(0, 8)}</strong>
-                        <small className="text-muted d-block">${order.total.toFixed(2)}</small>
+                        <small className="text-muted d-block">₹{order.total.toFixed(2)}</small>
                       </div>
                       <Badge bg="success">{order.status}</Badge>
                     </div>
@@ -348,8 +407,8 @@ function FarmerDashboard() {
                         <strong>Quantity:</strong> {crop.quantity} kg
                       </p>
                       <p className="mb-2">
-                        <i className="fas fa-dollar-sign me-1"></i>
-                        <strong>Price:</strong> ${crop.price}/kg
+                        <i className="fas fa-rupee-sign me-1"></i>
+                        <strong>Price:</strong> ₹{crop.price}/kg
                       </p>
                       <p className="text-muted small mb-3">
                         <i className="fas fa-map-marker-alt me-1"></i>{crop.location}
@@ -378,10 +437,10 @@ function FarmerDashboard() {
           )}
         </Tab>
 
-        <Tab eventKey="crop-prediction" title="Crop Prediction">
+        <Tab eventKey="crop-suggestion" title="Crop Suggestion">
           <Card className="border-0 shadow-sm">
             <Card.Header className="bg-info text-white">
-              <h5 className="mb-0"><i className="fas fa-brain me-2"></i>AI Crop Prediction</h5>
+              <h5 className="mb-0"><i className="fas fa-lightbulb me-2"></i>AI Crop Suggestion</h5>
             </Card.Header>
             <Card.Body>
               <Row>
@@ -390,8 +449,8 @@ function FarmerDashboard() {
                   <Form.Group className="mb-3">
                     <Form.Label>Soil Type</Form.Label>
                     <Form.Select
-                      value={cropPrediction.soilType}
-                      onChange={(e) => setCropPrediction(prev => ({ ...prev, soilType: e.target.value }))}
+                      value={cropSuggestion.soilType}
+                      onChange={(e) => setCropSuggestion(prev => ({ ...prev, soilType: e.target.value }))}
                     >
                       <option value="">Select Soil Type</option>
                       <option value="clay">Clay</option>
@@ -405,8 +464,8 @@ function FarmerDashboard() {
                   <Form.Group className="mb-3">
                     <Form.Label>Climate</Form.Label>
                     <Form.Select
-                      value={cropPrediction.climate}
-                      onChange={(e) => setCropPrediction(prev => ({ ...prev, climate: e.target.value }))}
+                      value={cropSuggestion.climate}
+                      onChange={(e) => setCropSuggestion(prev => ({ ...prev, climate: e.target.value }))}
                     >
                       <option value="">Select Climate</option>
                       <option value="tropical">Tropical</option>
@@ -419,8 +478,8 @@ function FarmerDashboard() {
                   <Form.Group className="mb-3">
                     <Form.Label>Season</Form.Label>
                     <Form.Select
-                      value={cropPrediction.season}
-                      onChange={(e) => setCropPrediction(prev => ({ ...prev, season: e.target.value }))}
+                      value={cropSuggestion.season}
+                      onChange={(e) => setCropSuggestion(prev => ({ ...prev, season: e.target.value }))}
                     >
                       <option value="">Select Season</option>
                       <option value="spring">Spring</option>
@@ -434,37 +493,166 @@ function FarmerDashboard() {
                     <Form.Control
                       type="text"
                       placeholder="Enter your location"
-                      value={cropPrediction.location}
-                      onChange={(e) => setCropPrediction(prev => ({ ...prev, location: e.target.value }))}
+                      value={cropSuggestion.location}
+                      onChange={(e) => setCropSuggestion(prev => ({ ...prev, location: e.target.value }))}
                     />
                   </Form.Group>
                   <Button 
                     variant="primary" 
-                    onClick={handleCropPrediction}
-                    disabled={cropPrediction.loading}
+                    onClick={handleCropSuggestion}
+                    disabled={cropSuggestion.loading}
                   >
-                    {cropPrediction.loading ? (
+                    {cropSuggestion.loading ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" role="status"></span>
                         Analyzing...
                       </>
                     ) : (
                       <>
-                        <i className="fas fa-magic me-2"></i>Get Prediction
+                        <i className="fas fa-lightbulb me-2"></i>Get Suggestions
                       </>
                     )}
                   </Button>
                 </Col>
                 <Col md={6}>
                   <h6 className="fw-bold mb-3">AI Recommendations</h6>
-                  {cropPrediction.prediction ? (
+                  {cropSuggestion.suggestion ? (
                     <div className="bg-light p-3 rounded">
-                      <pre className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{cropPrediction.prediction}</pre>
+                      <pre className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{cropSuggestion.suggestion}</pre>
                     </div>
                   ) : (
                     <div className="text-center text-muted py-4">
                       <i className="fas fa-seedling display-4 mb-3"></i>
                       <p>Fill in your farm details and get AI-powered crop recommendations</p>
+                    </div>
+                  )}
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Tab>
+
+        <Tab eventKey="harvest-prediction" title="Harvest Prediction">
+          <Card className="border-0 shadow-sm">
+            <Card.Header className="bg-success text-white">
+              <h5 className="mb-0"><i className="fas fa-chart-line me-2"></i>ML Harvest & Production Prediction</h5>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <Col md={6}>
+                  <h6 className="fw-bold mb-3">Enter Your Crop Details</h6>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Crop Type*</Form.Label>
+                    <Form.Select
+                      value={harvestPrediction.cropType}
+                      onChange={(e) => setHarvestPrediction(prev => ({ ...prev, cropType: e.target.value }))}
+                    >
+                      <option value="">Select Crop Type</option>
+                      <option value="rice">Rice</option>
+                      <option value="wheat">Wheat</option>
+                      <option value="corn">Corn</option>
+                      <option value="tomato">Tomato</option>
+                      <option value="potato">Potato</option>
+                      <option value="onion">Onion</option>
+                      <option value="chili">Chili</option>
+                      <option value="brinjal">Brinjal</option>
+                      <option value="okra">Okra</option>
+                      <option value="cabbage">Cabbage</option>
+                      <option value="cauliflower">Cauliflower</option>
+                      <option value="spinach">Spinach</option>
+                      <option value="mango">Mango</option>
+                      <option value="banana">Banana</option>
+                      <option value="sugarcane">Sugarcane</option>
+                      <option value="cotton">Cotton</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Planting Date*</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={harvestPrediction.plantingDate}
+                      onChange={(e) => setHarvestPrediction(prev => ({ ...prev, plantingDate: e.target.value }))}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Soil Quality*</Form.Label>
+                    <Form.Select
+                      value={harvestPrediction.soilQuality}
+                      onChange={(e) => setHarvestPrediction(prev => ({ ...prev, soilQuality: e.target.value }))}
+                    >
+                      <option value="">Select Soil Quality</option>
+                      <option value="excellent">Excellent</option>
+                      <option value="good">Good</option>
+                      <option value="average">Average</option>
+                      <option value="poor">Poor</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Weather Conditions</Form.Label>
+                    <Form.Select
+                      value={harvestPrediction.weatherConditions}
+                      onChange={(e) => setHarvestPrediction(prev => ({ ...prev, weatherConditions: e.target.value }))}
+                    >
+                      <option value="">Select Weather</option>
+                      <option value="optimal">Optimal</option>
+                      <option value="good">Good</option>
+                      <option value="average">Average</option>
+                      <option value="challenging">Challenging</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Irrigation</Form.Label>
+                    <Form.Select
+                      value={harvestPrediction.irrigation}
+                      onChange={(e) => setHarvestPrediction(prev => ({ ...prev, irrigation: e.target.value }))}
+                    >
+                      <option value="">Select Irrigation</option>
+                      <option value="drip">Drip Irrigation</option>
+                      <option value="sprinkler">Sprinkler</option>
+                      <option value="flood">Flood Irrigation</option>
+                      <option value="rainfed">Rainfed</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Fertilizer Used</Form.Label>
+                    <Form.Select
+                      value={harvestPrediction.fertilizer}
+                      onChange={(e) => setHarvestPrediction(prev => ({ ...prev, fertilizer: e.target.value }))}
+                    >
+                      <option value="">Select Fertilizer</option>
+                      <option value="organic">Organic</option>
+                      <option value="chemical">Chemical</option>
+                      <option value="mixed">Mixed (Organic + Chemical)</option>
+                      <option value="none">No Fertilizer</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Button 
+                    variant="success" 
+                    onClick={handleHarvestPrediction}
+                    disabled={harvestPrediction.loading}
+                  >
+                    {harvestPrediction.loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Predicting...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-chart-line me-2"></i>Predict Harvest
+                      </>
+                    )}
+                  </Button>
+                </Col>
+                <Col md={6}>
+                  <h6 className="fw-bold mb-3">ML Prediction Results</h6>
+                  {harvestPrediction.prediction ? (
+                    <div className="bg-light p-3 rounded">
+                      <pre className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{harvestPrediction.prediction}</pre>
+                    </div>
+                  ) : (
+                    <div className="text-center text-muted py-4">
+                      <i className="fas fa-chart-line display-4 mb-3"></i>
+                      <p>Enter your crop details and get ML-powered harvest predictions</p>
                     </div>
                   )}
                 </Col>
@@ -567,7 +755,7 @@ function FarmerDashboard() {
                             </div>
                           ))}
                         </td>
-                        <td>${order.total.toFixed(2)}</td>
+                        <td>₹{order.total.toFixed(2)}</td>
                         <td><Badge bg="success">{order.status}</Badge></td>
                       </tr>
                     ))}
@@ -635,7 +823,7 @@ function FarmerDashboard() {
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Price ($/kg)*</Form.Label>
+                  <Form.Label>Price (₹/kg)*</Form.Label>
                   <Form.Control
                     type="number"
                     name="price"

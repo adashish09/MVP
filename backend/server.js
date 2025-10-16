@@ -53,6 +53,7 @@ const orderRoutes = require('./routes/orders');
 const profileRoutes = require('./routes/profiles');
 const adminRoutes = require('./routes/admin');
 const geminiRoutes = require('./routes/GeminiRoute');
+const paymentRoutes = require('./routes/payments');
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -62,6 +63,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/gemini', geminiRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -10,41 +10,12 @@ function Cart() {
   const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (cart.length === 0) {
       setAlert({ type: 'warning', message: 'Your cart is empty' });
       return;
     }
-
-    setLoading(true);
-    setAlert(null);
-
-    try {
-      const items = cart.map(item => ({
-        cropId: item.id,
-        quantity: item.quantity,
-        price: item.price
-      }));
-
-      const response = await axios.post('/api/orders', { items });
-      
-      clearCart();
-      setAlert({ 
-        type: 'success', 
-        message: 'Order placed successfully! Redirecting to your orders...' 
-      });
-      
-      setTimeout(() => {
-        navigate('/buyer/dashboard');
-      }, 2000);
-    } catch (error) {
-      setAlert({ 
-        type: 'danger', 
-        message: error.response?.data?.message || 'Failed to place order' 
-      });
-    } finally {
-      setLoading(false);
-    }
+    navigate('/payment');
   };
 
   return (
@@ -77,7 +48,7 @@ function Cart() {
                     <div className="flex-grow-1">
                       <h5 className="mb-1">{item.name}</h5>
                       <p className="text-muted mb-2">{item.category} • {item.location}</p>
-                      <p className="mb-0 text-success fw-bold">${item.price}/kg</p>
+                      <p className="mb-0 text-success fw-bold">₹{item.price}/kg</p>
                     </div>
                     <div className="d-flex align-items-center">
                       <Form.Control
@@ -90,7 +61,7 @@ function Cart() {
                         className="me-3"
                       />
                       <div className="me-3" style={{ minWidth: '100px', textAlign: 'right' }}>
-                        <strong>${(item.price * item.quantity).toFixed(2)}</strong>
+                        <strong>₹{(item.price * item.quantity).toFixed(2)}</strong>
                       </div>
                       <Button 
                         variant="outline-danger" 
@@ -115,16 +86,16 @@ function Cart() {
                   <tbody>
                     <tr>
                       <td>Subtotal:</td>
-                      <td className="text-end">${getCartTotal().toFixed(2)}</td>
+                      <td className="text-end">₹{getCartTotal().toFixed(2)}</td>
                     </tr>
                     <tr>
                       <td>Tax (0%):</td>
-                      <td className="text-end">$0.00</td>
+                      <td className="text-end">₹0.00</td>
                     </tr>
                     <tr className="border-top">
                       <td><strong>Total:</strong></td>
                       <td className="text-end">
-                        <strong className="text-success h5">${getCartTotal().toFixed(2)}</strong>
+                        <strong className="text-success h5">₹{getCartTotal().toFixed(2)}</strong>
                       </td>
                     </tr>
                   </tbody>
@@ -137,7 +108,7 @@ function Cart() {
                     onClick={handleCheckout}
                     disabled={loading}
                   >
-                    {loading ? 'Processing...' : 'Proceed to Checkout'}
+                    Proceed to Payment
                   </Button>
                   <Button 
                     variant="outline-secondary"

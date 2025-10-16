@@ -66,6 +66,23 @@ router.post('/', verifyToken, requireRole('buyer'), requireApproved, (req, res) 
     ordersData.push(newOrder);
     fs.writeFileSync(ordersFile, JSON.stringify(ordersData, null, 2));
 
+    // Update farmer revenues
+    const farmerIds = [...new Set(orderItems.map(item => item.farmerId))];
+    for (const farmerId of farmerIds) {
+      try {
+        const axios = require('axios');
+        await axios.post(`http://localhost:${process.env.PORT || 5000}/api/payments/farmer/${farmerId}/update-revenue`, {
+          orderId: newOrder.id
+        }, {
+          headers: {
+            'Authorization': req.headers.authorization
+          }
+        });
+      } catch (error) {
+        console.error(`Failed to update revenue for farmer ${farmerId}:`, error.message);
+      }
+    }
+
     res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
