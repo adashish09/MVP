@@ -1,0 +1,21 @@
+{
+  "name": "farmer-marketplace-platform",
+  "version": "1.0.0",
+  "description": "MVP web application for Farmer Marketplace Platform",
+  "scripts": {
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "install-all": "npm run install-backend && npm run install-frontend",
+    "backend": "cd backend && npm start",
+    "frontend": "cd frontend && npm start",
+    "backend-dev": "cd backend && npm run dev"
+  },
+  "keywords": [
+    "farmer",
+    "marketplace",
+    "agriculture",
+    "e-commerce"
+  ],
+  "author": "",
+  "license": "MIT"
+}
