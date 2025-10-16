@@ -1,0 +1,11 @@
+[
+  {
+    "id": "AngiSxgHaYMEbXzPdno1o",
+    "name": "Super Admin",
+    "email": "admin@local",
+    "passwordHash": "$2a$10$XpC8tps1s5TGPyWLOgQc4.J8Vgq/2NpuA3spBwvLJ0mLP74iTmQT.",
+    "role": "superadmin",
+    "status": "approved",
+    "createdAt": "2025-10-16T08:10:22.358Z"
+  }
+]
