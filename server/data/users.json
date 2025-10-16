@@ -1,0 +1,11 @@
+[
+  {
+    "id": "onRalA--GOHT19TWubmO3",
+    "name": "Super Admin",
+    "email": "admin@local",
+    "passwordHash": "$2a$10$S3PNibvIGN33yh.y8ezy/egw6fEXLQgGixCerJGZG0FRHyVWefHo6",
+    "role": "superadmin",
+    "status": "approved",
+    "createdAt": "2025-10-16T08:08:47.134Z"
+  }
+]
