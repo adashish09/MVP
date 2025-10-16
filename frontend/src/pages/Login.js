@@ -101,7 +101,7 @@ function Login() {
               
               <div className="text-muted small">
                 <p className="mb-2"><strong>Demo Credentials:</strong></p>
-                <p className="mb-1">Admin: admin@farmmarket.com / admin123</p>
+                <p className="mb-1">Admin: admin@local / admin123</p>
                 <p className="mb-0 text-info">Register as Farmer or Buyer to test other roles</p>
               </div>
             </Card.Body>
