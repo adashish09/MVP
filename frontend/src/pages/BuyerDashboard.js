@@ -88,7 +88,7 @@ function BuyerDashboard() {
                     </Col>
                     <Col md={6} className="text-md-end">
                       <Badge bg="success" className="mb-2">{order.status}</Badge>
-                      <h4 className="text-success mb-0">${order.total.toFixed(2)}</h4>
+                      <h4 className="text-success mb-0">₹{order.total.toFixed(2)}</h4>
                     </Col>
                   </Row>
 
@@ -106,8 +106,8 @@ function BuyerDashboard() {
                         <tr key={idx}>
                           <td>{item.cropName}</td>
                           <td>{item.quantity} kg</td>
-                          <td>${item.price.toFixed(2)}/kg</td>
-                          <td>${item.subtotal.toFixed(2)}</td>
+                          <td>₹{item.price.toFixed(2)}/kg</td>
+                          <td>₹{item.subtotal.toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>

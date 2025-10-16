@@ -11,10 +11,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import CropDetails from './pages/CropDetails';
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
+import Payment from './pages/Payment';
 import Gemini from './pages/Gemini';
 import CommunityRoom from './pages/CommunityRoom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { TranslationProvider } from './context/TranslationContext';
 
 function PrivateRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
@@ -95,6 +97,15 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
+      
+      <Route
+        path="/payment"
+        element={
+          <PrivateRoute allowedRoles={['buyer']}>
+            <Payment />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 }
@@ -102,14 +113,16 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <CartProvider>
-          <div className="App">
-            <Navigation />
-            <AppRoutes />
-          </div>
-        </CartProvider>
-      </AuthProvider>
+      <TranslationProvider>
+        <AuthProvider>
+          <CartProvider>
+            <div className="App">
+              <Navigation />
+              <AppRoutes />
+            </div>
+          </CartProvider>
+        </AuthProvider>
+      </TranslationProvider>
     </Router>
   );
 }

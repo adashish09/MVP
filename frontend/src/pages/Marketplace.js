@@ -183,7 +183,7 @@ function Marketplace() {
                     <strong>Available:</strong> {crop.quantity} kg
                   </Card.Text>
                   <Card.Text className="h5 text-success mb-3 fw-bold">
-                    ${crop.price}/kg
+                    ₹{crop.price}/kg
                   </Card.Text>
                   <div className="mt-auto">
                     <Link to={`/crops/${crop.id}`}>

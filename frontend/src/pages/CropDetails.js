@@ -110,7 +110,7 @@ function CropDetails() {
                 <span className="badge bg-info">{crop.location}</span>
               </div>
 
-              <h3 className="text-success mb-4">${crop.price}/kg</h3>
+              <h3 className="text-success mb-4">₹{crop.price}/kg</h3>
 
               <div className="mb-4">
                 <p><strong>Available Quantity:</strong> {crop.quantity} kg</p>
@@ -151,7 +151,7 @@ function CropDetails() {
                       onClick={handleBuyNow}
                       disabled={crop.quantity === 0}
                     >
-                      Buy Now - ${(crop.price * quantity).toFixed(2)}
+                      Buy Now - ₹{(crop.price * quantity).toFixed(2)}
                     </Button>
                     <Button 
                       variant="outline-primary" 
