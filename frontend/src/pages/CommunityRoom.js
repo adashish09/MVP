@@ -110,7 +110,7 @@ const CommunityRoom = () => {
 
   return (
     <div className="community-container">
-      <h2 className="community-title">Community Room</h2>
+      <h2 className="community-title">Chaupal</h2>
 
       <div className="feed">
         {messages.map((msg) => (
