@@ -3,13 +3,12 @@ import { Container, Row, Col, Card, Button, Form, Alert, Table, Badge } from 're
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { useTranslation } from '../context/TranslationContext';
+// Translations removed from navbar as requested; keep page static labels
 import axios from 'axios';
 
 function Payment() {
   const { user } = useAuth();
-  const { cartItems, clearCart, getCartTotal } = useCart();
-  const { t } = useTranslation();
+  const { cart, clearCart, getCartTotal } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -35,11 +34,11 @@ function Payment() {
       return;
     }
     
-    if (cartItems.length === 0) {
+    if (cart.length === 0) {
       navigate('/marketplace');
       return;
     }
-  }, [user, cartItems, navigate]);
+  }, [user, cart, navigate]);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -52,7 +51,7 @@ function Payment() {
 
       // Create order
       const orderData = {
-        items: cartItems.map(item => ({
+        items: cart.map(item => ({
           cropId: item.id,
           quantity: item.quantity,
           price: item.price
@@ -94,7 +93,7 @@ function Payment() {
     return value.replace(/\D/g, '').replace(/(.{2})/, '$1/').substring(0, 5);
   };
 
-  if (!user || user.role !== 'buyer' || cartItems.length === 0) {
+  if (!user || user.role !== 'buyer' || cart.length === 0) {
     return null;
   }
 
@@ -108,8 +107,8 @@ function Payment() {
 
       <Row className="mb-4">
         <Col>
-          <h1 className="display-5 fw-bold mb-2">{t('payment.title')}</h1>
-          <p className="lead text-muted">{t('payment.subtitle')}</p>
+          <h1 className="display-5 fw-bold mb-2">Payment</h1>
+          <p className="lead text-muted">Complete your purchase securely</p>
         </Col>
       </Row>
 
@@ -117,12 +116,12 @@ function Payment() {
         <Col lg={8}>
           <Card className="border-0 shadow-sm mb-4">
             <Card.Header className="bg-primary text-white">
-              <h5 className="mb-0"><i className="fas fa-credit-card me-2"></i>{t('payment.paymentMethod')}</h5>
+              <h5 className="mb-0"><i className="fas fa-credit-card me-2"></i>Payment Method</h5>
             </Card.Header>
             <Card.Body>
               <Form onSubmit={handlePayment}>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('payment.selectMethod')}</Form.Label>
+                  <Form.Label>Select Payment Method</Form.Label>
                   <div>
                     <Form.Check
                       type="radio"
@@ -223,7 +222,7 @@ function Payment() {
                 )}
 
                 <hr />
-                <h6 className="fw-bold mb-3">{t('payment.billingAddress')}</h6>
+                <h6 className="fw-bold mb-3">Billing Address</h6>
                 <Row>
                   <Col md={12}>
                     <Form.Group className="mb-3">
@@ -317,7 +316,7 @@ function Payment() {
         <Col lg={4}>
           <Card className="border-0 shadow-sm sticky-top" style={{ top: '20px' }}>
             <Card.Header className="bg-light">
-              <h5 className="mb-0"><i className="fas fa-shopping-cart me-2"></i>{t('payment.orderSummary')}</h5>
+              <h5 className="mb-0"><i className="fas fa-shopping-cart me-2"></i>Order Summary</h5>
             </Card.Header>
             <Card.Body>
               <Table responsive>
@@ -329,7 +328,7 @@ function Payment() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartItems.map((item, index) => (
+                  {cart.map((item, index) => (
                     <tr key={index}>
                       <td>
                         <div>
