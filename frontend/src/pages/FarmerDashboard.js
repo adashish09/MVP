@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Modal, Alert, Badge, Table, Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../context/TranslationContext';
 
 function FarmerDashboard() {
+  const location = useLocation();
   const { user } = useAuth();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
@@ -60,6 +62,13 @@ function FarmerDashboard() {
     
     return () => clearInterval(interval);
   }, [user]);
+
+  // Sync tab from query parameter
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab) setActiveTab(tab);
+  }, [location.search]);
 
   const fetchData = async () => {
     try {

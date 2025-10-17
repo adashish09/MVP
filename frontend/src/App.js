@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import Home from './pages/Home';
+import Landing from './pages/Landing';
+import FarmerHome from './pages/FarmerHome';
 import Marketplace from './pages/Marketplace';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -45,13 +46,17 @@ function PrivateRoute({ children, allowedRoles }) {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Landing />} />
+      <Route path="/landing" element={<Landing />} />
+      <Route path="/farmers" element={<FarmerHome />} />
+      <Route path="/buyers" element={<Marketplace />} />
       <Route path="/marketplace" element={<Marketplace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/crops/:id" element={<CropDetails />} />
       <Route path="/assistant" element={<Gemini />} />
       <Route path='/community' element={<CommunityRoom />} />
+      <Route path='/chaupal' element={<CommunityRoom />} />
       
       <Route
         path="/farmer/dashboard"

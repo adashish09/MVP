@@ -18,7 +18,7 @@ const translations = {
     'nav.marketplace': 'Marketplace',
     'nav.dashboard': 'Dashboard',
     'nav.meetKalyani': 'Meet Kalyani',
-    'nav.community': 'Community Forum',
+    'nav.community': 'Chaupal',
     'nav.profile': 'Profile',
     'nav.cart': 'Cart',
     'nav.welcome': 'Welcome',
@@ -146,7 +146,7 @@ const translations = {
     'nav.marketplace': 'बाजार',
     'nav.dashboard': 'डैशबोर्ड',
     'nav.meetKalyani': 'कल्याणी से मिलें',
-    'nav.community': 'समुदाय फोरम',
+    'nav.community': 'चौपाल',
     'nav.profile': 'प्रोफाइल',
     'nav.cart': 'कार्ट',
     'nav.welcome': 'स्वागत है',
@@ -274,7 +274,7 @@ const translations = {
     'nav.marketplace': 'சந்தை',
     'nav.dashboard': 'டாஷ்போர்டு',
     'nav.meetKalyani': 'கல்யாணியை சந்திக்கவும்',
-    'nav.community': 'சமூக மன்றம்',
+    'nav.community': 'சௌபால்',
     'nav.profile': 'சுயவிவரம்',
     'nav.cart': 'கார்ட்',
     'nav.welcome': 'வரவேற்கிறோம்',
@@ -398,39 +398,18 @@ const translations = {
 };
 
 export const TranslationProvider = ({ children }) => {
-  const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('selectedLanguage') || 'en';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('selectedLanguage', language);
-  }, [language]);
+  // Keep simple provider for compatibility; navbar no longer exposes language switcher
+  const [language] = useState('en');
 
   const t = (key, params = {}) => {
     let translation = translations[language]?.[key] || translations['en'][key] || key;
-    
-    // Replace parameters in translation
     Object.keys(params).forEach(param => {
       translation = translation.replace(`{${param}}`, params[param]);
     });
-    
     return translation;
   };
 
-  const changeLanguage = (newLanguage) => {
-    setLanguage(newLanguage);
-  };
-
-  const value = {
-    language,
-    changeLanguage,
-    t,
-    availableLanguages: [
-      { code: 'en', name: 'English', flag: '🇺🇸' },
-      { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
-      { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' }
-    ]
-  };
+  const value = { language, t };
 
   return (
     <TranslationContext.Provider value={value}>
