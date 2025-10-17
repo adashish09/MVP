@@ -44,20 +44,35 @@ function PrivateRoute({ children, allowedRoles }) {
 }
 
 function AppRoutes() {
+  const { user } = useAuth();
+
+  // Redirect root based on user role
+  const getDefaultRoute = () => {
+    if (!user) return <Landing />;
+    if (user.role === 'farmer') return <Navigate to="/farmers" />;
+    if (user.role === 'buyer') return <Navigate to="/marketplace" />;
+    return <Landing />;
+  };
+
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      {/* Main home pages */}
+      <Route path="/" element={getDefaultRoute()} />
       <Route path="/landing" element={<Landing />} />
       <Route path="/farmers" element={<FarmerHome />} />
-      <Route path="/buyers" element={<Marketplace />} />
       <Route path="/marketplace" element={<Marketplace />} />
+      
+      {/* Auth routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      
+      {/* Public routes */}
       <Route path="/crops/:id" element={<CropDetails />} />
       <Route path="/assistant" element={<Gemini />} />
-      <Route path='/community' element={<CommunityRoom />} />
-      <Route path='/chaupal' element={<CommunityRoom />} />
+      <Route path="/community" element={<CommunityRoom />} />
+      <Route path="/chaupal" element={<CommunityRoom />} />
       
+      {/* Farmer routes */}
       <Route
         path="/farmer/dashboard"
         element={
@@ -67,29 +82,12 @@ function AppRoutes() {
         }
       />
       
+      {/* Buyer routes */}
       <Route
         path="/buyer/dashboard"
         element={
           <PrivateRoute allowedRoles={['buyer']}>
             <BuyerDashboard />
-          </PrivateRoute>
-        }
-      />
-      
-      <Route
-        path="/admin/dashboard"
-        element={
-          <PrivateRoute allowedRoles={['superadmin']}>
-            <AdminDashboard />
-          </PrivateRoute>
-        }
-      />
-      
-      <Route
-        path="/profile"
-        element={
-          <PrivateRoute>
-            <Profile />
           </PrivateRoute>
         }
       />
@@ -108,6 +106,26 @@ function AppRoutes() {
         element={
           <PrivateRoute allowedRoles={['buyer']}>
             <Payment />
+          </PrivateRoute>
+        }
+      />
+      
+      {/* Admin routes */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <PrivateRoute allowedRoles={['superadmin']}>
+            <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+      
+      {/* Common authenticated routes */}
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         }
       />

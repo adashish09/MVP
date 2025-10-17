@@ -25,32 +25,48 @@ function Home() {
               <div className="d-flex flex-wrap gap-3 mb-4">
                 {!user ? (
                   <>
-                    <Link to="/register">
-                      <Button variant="warning" size="lg" className="px-4 py-3">
-                        Get Started Today
-                      </Button>
-                    </Link>
-                    <Link to="/login">
-                      <Button variant="outline-light" size="lg" className="px-4 py-3">
-                        Sign In
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="warning" 
+                      size="lg" 
+                      className="px-4 py-3"
+                      as={Link}
+                      to="/register"
+                    >
+                      Get Started Today
+                    </Button>
+                    <Button 
+                      variant="outline-light" 
+                      size="lg" 
+                      className="px-4 py-3"
+                      as={Link}
+                      to="/login"
+                    >
+                      Sign In
+                    </Button>
                   </>
                 ) : (
                   <>
                     {user.role === 'farmer' && (
-                      <Link to="/farmer/dashboard">
-                        <Button variant="warning" size="lg" className="px-4 py-3">
-                          Go to Dashboard
-                        </Button>
-                      </Link>
+                      <Button 
+                        variant="warning" 
+                        size="lg" 
+                        className="px-4 py-3"
+                        as={Link}
+                        to="/farmers"
+                      >
+                        Go to Farmer Home
+                      </Button>
                     )}
                     {user.role === 'buyer' && (
-                      <Link to="/buyer/dashboard">
-                        <Button variant="warning" size="lg" className="px-4 py-3">
-                          Browse Crops
-                        </Button>
-                      </Link>
+                      <Button 
+                        variant="warning" 
+                        size="lg" 
+                        className="px-4 py-3"
+                        as={Link}
+                        to="/marketplace"
+                      >
+                        Browse Marketplace
+                      </Button>
                     )}
                   </>
                 )}
@@ -199,11 +215,15 @@ function Home() {
                 Join thousands of farmers and buyers who are already using our platform
               </p>
               {!user && (
-                <Link to="/register">
-                  <Button variant="warning" size="lg" className="px-5 py-3">
-                    Start Your Journey Today
-                  </Button>
-                </Link>
+                <Button 
+                  variant="warning" 
+                  size="lg" 
+                  className="px-5 py-3"
+                  as={Link}
+                  to="/register"
+                >
+                  Start Your Journey Today
+                </Button>
               )}
             </Col>
           </Row>

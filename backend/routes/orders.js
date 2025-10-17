@@ -9,7 +9,7 @@ const ordersFile = path.join(__dirname, '../data/orders.json');
 const cropsFile = path.join(__dirname, '../data/crops.json');
 
 // Create order (buyers only)
-router.post('/', verifyToken, requireRole('buyer'), requireApproved, (req, res) => {
+router.post('/', verifyToken, requireRole('buyer'), requireApproved, async (req, res) => {
   try {
     const { items } = req.body; // items: [{ cropId, quantity, price }]
 
@@ -66,7 +66,7 @@ router.post('/', verifyToken, requireRole('buyer'), requireApproved, (req, res) 
     ordersData.push(newOrder);
     fs.writeFileSync(ordersFile, JSON.stringify(ordersData, null, 2));
 
-    // Update farmer revenues
+    // Update farmer revenues (async operation, don't block order creation)
     const farmerIds = [...new Set(orderItems.map(item => item.farmerId))];
     for (const farmerId of farmerIds) {
       try {

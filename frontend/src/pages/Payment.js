@@ -46,10 +46,33 @@ function Payment() {
     setAlert(null);
 
     try {
+      // Validate payment details
+      if (paymentMethod === 'upi' && !upiId.trim()) {
+        setAlert({ type: 'danger', message: 'Please enter a valid UPI ID' });
+        setLoading(false);
+        return;
+      }
+
+      if (paymentMethod === 'card') {
+        if (!cardNumber.trim() || !cardExpiry.trim() || !cardCvv.trim() || !cardName.trim()) {
+          setAlert({ type: 'danger', message: 'Please fill in all card details' });
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Validate billing address
+      if (!billingAddress.street || !billingAddress.city || !billingAddress.state || !billingAddress.pincode) {
+        setAlert({ type: 'danger', message: 'Please fill in all billing address fields' });
+        setLoading(false);
+        return;
+      }
+
       // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Create order
+      const token = localStorage.getItem('token');
       const orderData = {
         items: cart.map(item => ({
           cropId: item.id,
@@ -58,7 +81,12 @@ function Payment() {
         }))
       };
 
-      const response = await axios.post('/api/orders', orderData);
+      const response = await axios.post('/api/orders', orderData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       
       if (response.data.order) {
         setAlert({ 
