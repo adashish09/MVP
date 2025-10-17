@@ -18,16 +18,24 @@ function FarmerHome() {
                 Use Kalyaani, AI suggestions, ML predictions, and tools to grow smarter.
               </p>
               <div className="d-flex flex-wrap gap-3 mb-4">
-                <Link to="/assistant">
-                  <Button variant="warning" size="lg" className="px-4 py-3">
-                    Get Started with Kalyaani
-                  </Button>
-                </Link>
-                <Link to="/farmer/dashboard">
-                  <Button variant="outline-light" size="lg" className="px-4 py-3">
-                    Go to Dashboard
-                  </Button>
-                </Link>
+                <Button 
+                  variant="warning" 
+                  size="lg" 
+                  className="px-4 py-3"
+                  as={Link}
+                  to="/assistant"
+                >
+                  Get Started with Kalyaani
+                </Button>
+                <Button 
+                  variant="outline-light" 
+                  size="lg" 
+                  className="px-4 py-3"
+                  as={Link}
+                  to="/farmer/dashboard"
+                >
+                  Go to Dashboard
+                </Button>
               </div>
             </Col>
             <Col lg={5} className="text-center">
@@ -55,9 +63,9 @@ function FarmerHome() {
                   <div className="mb-3 text-primary display-6"><i className="fas fa-seedling"></i></div>
                   <h5 className="fw-bold">My Crops</h5>
                   <p className="text-muted flex-grow-1">Manage your crop listings and availability.</p>
-                  <Link to="/farmer/dashboard?tab=crops" className="mt-auto">
-                    <Button variant="primary">Open</Button>
-                  </Link>
+                  <Button variant="primary" as={Link} to="/farmer/dashboard?tab=crops" className="mt-auto">
+                    Open
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>
@@ -67,9 +75,9 @@ function FarmerHome() {
                   <div className="mb-3 text-success display-6"><i className="fas fa-lightbulb"></i></div>
                   <h5 className="fw-bold">AI Crop Suggestion</h5>
                   <p className="text-muted flex-grow-1">Get AI recommendations for what to grow.</p>
-                  <Link to="/farmer/dashboard?tab=crop-suggestion" className="mt-auto">
-                    <Button variant="success">Open</Button>
-                  </Link>
+                  <Button variant="success" as={Link} to="/farmer/dashboard?tab=crop-suggestion" className="mt-auto">
+                    Open
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>
@@ -79,9 +87,9 @@ function FarmerHome() {
                   <div className="mb-3 text-info display-6"><i className="fas fa-chart-line"></i></div>
                   <h5 className="fw-bold">Harvest Prediction</h5>
                   <p className="text-muted flex-grow-1">Predict yield and production using ML.</p>
-                  <Link to="/farmer/dashboard?tab=harvest-prediction" className="mt-auto">
-                    <Button variant="info">Open</Button>
-                  </Link>
+                  <Button variant="info" as={Link} to="/farmer/dashboard?tab=harvest-prediction" className="mt-auto">
+                    Open
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>
@@ -91,9 +99,9 @@ function FarmerHome() {
                   <div className="mb-3 text-warning display-6"><i className="fas fa-bug"></i></div>
                   <h5 className="fw-bold">Pest Detection</h5>
                   <p className="text-muted flex-grow-1">Diagnose issues and get treatment guidance.</p>
-                  <Link to="/farmer/dashboard?tab=pest-detection" className="mt-auto">
-                    <Button variant="warning">Open</Button>
-                  </Link>
+                  <Button variant="warning" as={Link} to="/farmer/dashboard?tab=pest-detection" className="mt-auto">
+                    Open
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>
@@ -103,9 +111,9 @@ function FarmerHome() {
                   <div className="mb-3 text-secondary display-6"><i className="fas fa-shopping-cart"></i></div>
                   <h5 className="fw-bold">Orders</h5>
                   <p className="text-muted flex-grow-1">Track orders received for your crops.</p>
-                  <Link to="/farmer/dashboard?tab=orders" className="mt-auto">
-                    <Button variant="secondary">Open</Button>
-                  </Link>
+                  <Button variant="secondary" as={Link} to="/farmer/dashboard?tab=orders" className="mt-auto">
+                    Open
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>

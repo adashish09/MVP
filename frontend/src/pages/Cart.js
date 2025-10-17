@@ -30,7 +30,7 @@ function Cart() {
 
       {cart.length === 0 ? (
         <Alert variant="info">
-          Your cart is empty. <Button variant="link" onClick={() => navigate('/')}>Browse crops</Button>
+          Your cart is empty. <Button variant="link" onClick={() => navigate('/marketplace')}>Browse crops</Button>
         </Alert>
       ) : (
         <Row>
@@ -112,7 +112,7 @@ function Cart() {
                   </Button>
                   <Button 
                     variant="outline-secondary"
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/marketplace')}
                   >
                     Continue Shopping
                   </Button>
