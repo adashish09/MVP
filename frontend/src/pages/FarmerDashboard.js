@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, Modal, Alert, Badge, Table, Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { useTranslation } from '../context/TranslationContext';
 
 function FarmerDashboard() {
   const { user } = useAuth();
-  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
   const [crops, setCrops] = useState([]);
   const [orders, setOrders] = useState([]);

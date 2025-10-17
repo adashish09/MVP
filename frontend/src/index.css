@@ -304,6 +304,20 @@ code {
   height: 3rem;
 }
 
+/* Hover Card Effect */
+.hover-card {
+  transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+}
+
+.hover-card a {
+  text-decoration: none;
+}
+
 /* Responsive Improvements */
 @media (max-width: 768px) {
   .display-5 {
@@ -312,6 +326,10 @@ code {
   
   .display-3 {
     font-size: 2.5rem;
+  }
+  
+  .display-2 {
+    font-size: 2.8rem;
   }
   
   .hero-section {

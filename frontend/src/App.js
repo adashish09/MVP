@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import Home from './pages/Home';
+import LandingPage from './pages/LandingPage';
+import FarmersHome from './pages/FarmersHome';
 import Marketplace from './pages/Marketplace';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -42,10 +43,32 @@ function PrivateRoute({ children, allowedRoles }) {
   return children;
 }
 
+function HomeRoute() {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <LandingPage />;
+  }
+  
+  if (user.role === 'farmer') {
+    return <FarmersHome />;
+  }
+  
+  if (user.role === 'buyer') {
+    return <Navigate to="/marketplace" />;
+  }
+  
+  if (user.role === 'superadmin') {
+    return <Navigate to="/admin/dashboard" />;
+  }
+  
+  return <LandingPage />;
+}
+
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<HomeRoute />} />
       <Route path="/marketplace" element={<Marketplace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
