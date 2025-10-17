@@ -55,7 +55,7 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/crops/:id" element={<CropDetails />} />
       <Route path="/assistant" element={<Gemini />} />
-      <Route path='/community' element={<CommunityRoom />} />
+      <Route path='/community' element={<Navigate to="/chaupal" replace />} />
       <Route path='/chaupal' element={<CommunityRoom />} />
       
       <Route

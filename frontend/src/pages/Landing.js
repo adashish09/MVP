@@ -215,7 +215,7 @@ function Landing() {
                   <Form.Label>Message</Form.Label>
                   <Form.Control as="textarea" rows={4} placeholder="How can we help?" />
                 </Form.Group>
-                <Button variant="primary">Send Message</Button>
+                <Button variant="primary" type="button" onClick={() => window.alert('Thanks! We will get back to you soon.')}>Send Message</Button>
               </Form>
             </Col>
           </Row>

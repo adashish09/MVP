@@ -33,6 +33,12 @@ function Payment() {
       navigate('/login');
       return;
     }
+
+    if (!user.approved) {
+      setAlert({ type: 'warning', message: 'Your buyer account is pending approval. Please wait for admin approval before making payments.' });
+      navigate('/marketplace');
+      return;
+    }
     
     if (cart.length === 0) {
       navigate('/marketplace');
